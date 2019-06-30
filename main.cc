@@ -24,16 +24,14 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  /*
-// Try a select.
-char* msg = nullptr;
-status = sqlite3_exec(db, "SELECT * FROM demo", nullptr, nullptr, &msg);
-if (status == SQLITE_OK) {
-fprintf(stderr, "OK\n");
-} else {
-fprintf(stderr, "error %d returned from sqlite3_exec()\n", status);
-}
-  */
+  // Try a select.
+  char* msg = nullptr;
+  status = sqlite3_exec(db, "SELECT * FROM demo", nullptr, nullptr, &msg);
+  if (status == SQLITE_OK) {
+    fprintf(stderr, "OK\n");
+  } else {
+    fprintf(stderr, "error %d returned from sqlite3_exec()\n", status);
+  }
 
   // Close the db instance.
   sqlite3_close(db);
