@@ -14,8 +14,8 @@ format:
 	clang-format -style=Google -i *.h *.c
 
 demo: demo.o main.o
-	$(CXX) $(CCFLAGS) -o demo $^ $(LIBS)
+	$(CC) $(CCFLAGS) -o demo $^ $(LIBS)
 
 .c.o:
-	$(CC) $(CXXFLAGS) -c $<
+	$(CC) $(CCFLAGS) -c $<
 
