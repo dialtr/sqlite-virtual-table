@@ -5,9 +5,20 @@
 #include <string.h>
 #include <cstdio>
 
-#define TRACE_FUNCTION() fprintf(stderr, "TRACE: %s\n", __FUNCTION__)
+#define TRACE_FUNCTION() \
+	fprintf(stderr, "TRACE: %s\n", __FUNCTION__)
 
 const char *DEMO_TABLE_NAME = "demo";
+
+// The schema for our demo table. For the demo, the table schema
+// consists of a single column named 'value', which is an integer.
+// The implementation of the virtual table informs the engine of
+// the schema by calling 'sqlite3_declare_vtab'. The name of the
+// table and any constraints are ignored.
+const char *DEMO_TABLE_SCHEMA = 
+  "CREATE TABLE xx( "
+	"  value INTEGER "
+	");";
 
 extern "C" {
 
@@ -26,9 +37,17 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
                 sqlite3_vtab **ppVTab, char **pzErr) {
   TRACE_FUNCTION();
 
+	// Inform the SQLite engine of our virtual table's schema.
+	int status = sqlite3_declare_vtab(db, DEMO_TABLE_SCHEMA);
+	if (status != SQLITE_OK) {
+		return status;
+	}
+
   // Allocate a copy of our custom table structure.
   // See demo.h for details.
-  DemoTable *table = new DemoTable();
+//DemoTable *table = new DemoTable();
+  DemoTable *table = reinterpret_cast<DemoTable*>(
+			sqlite3_malloc64(sizeof(DemoTable)));
   if (!table) {
     // In the unlikely event that we couldn't allocate memory for the
     // structure, return the following error:
@@ -51,15 +70,16 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
 int DemoBestIndex(sqlite3_vtab *pVTab, sqlite3_index_info *) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoDisconnect(sqlite3_vtab *pVTab) {
   TRACE_FUNCTION();
 
+	// Just delete the table structure.
   DemoTable *table = reinterpret_cast<DemoTable *>(pVTab);
-
-  delete table;
+  //delete table;
+	sqlite3_free(table);
 
   return SQLITE_OK;
 }
@@ -67,51 +87,55 @@ int DemoDisconnect(sqlite3_vtab *pVTab) {
 int DemoDestroy(sqlite3_vtab *pVTab) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoOpen(sqlite3_vtab *pVTab, sqlite3_vtab_cursor **ppCursor) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoClose(sqlite3_vtab_cursor *) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoFilter(sqlite3_vtab_cursor *, int idxNum, const char *idxStr, int argc,
                sqlite3_value **argv) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoNext(sqlite3_vtab_cursor *) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoEof(sqlite3_vtab_cursor *) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoColumn(sqlite3_vtab_cursor *, sqlite3_context *, int) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
 
 int DemoRowid(sqlite3_vtab_cursor *, sqlite_int64 *pRowid) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
-  return -1;
+  return SQLITE_ERROR;
 }
+
+//
+// The following functions are intentionally not implemented for the demo.
+//
 
 int DemoUpdate(sqlite3_vtab *, int, sqlite3_value **, sqlite_int64 *) {
   TRACE_FUNCTION();
@@ -187,6 +211,8 @@ int DemoShadowName(const char *) {
 
 }  // extern "C"
 
+
+// Register the demo table.
 int RegisterDemo(sqlite3 *db) {
   sqlite3_module module;
   memset(&module, 0, sizeof(module));
