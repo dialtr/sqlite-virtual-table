@@ -67,8 +67,10 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
 
 int DemoBestIndex(sqlite3_vtab *pVTab, sqlite3_index_info *info) {
   TRACE_FUNCTION();
-  // TODO(tdial): Implement
-  return SQLITE_ERROR;
+
+  // TODO(tdial): A real implementation would touch the structures.
+
+  return SQLITE_OK;
 }
 
 int DemoDisconnect(sqlite3_vtab *pVTab) {
@@ -89,14 +91,24 @@ int DemoDestroy(sqlite3_vtab *pVTab) {
 
 int DemoOpen(sqlite3_vtab *pVTab, sqlite3_vtab_cursor **ppCursor) {
   TRACE_FUNCTION();
-  // TODO(tdial): Implement
-  return SQLITE_ERROR;
+	DemoCursor* cursor = (DemoCursor*)sqlite3_malloc64(sizeof(DemoCursor));
+	if (!cursor) {
+		return SQLITE_NOMEM;
+	}
+
+	memset(cursor, 0, sizeof(DemoCursor));
+	cursor->base.pVtab = pVTab;
+	cursor->n = 0;
+	*ppCursor = (sqlite3_vtab_cursor*)cursor;
+
+  return SQLITE_OK;
 }
 
-int DemoClose(sqlite3_vtab_cursor *cursor) {
+int DemoClose(sqlite3_vtab_cursor *pCursor) {
   TRACE_FUNCTION();
-  // TODO(tdial): Implement
-  return SQLITE_ERROR;
+	DemoCursor* cursor = (DemoCursor*)pCursor;
+	sqlite3_free(cursor);
+  return SQLITE_OK;
 }
 
 int DemoFilter(sqlite3_vtab_cursor *cursor, int idxNum, const char *idxStr,
