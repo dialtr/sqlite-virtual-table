@@ -1,5 +1,5 @@
-CXX=g++
-CXXFLAGS=-Wall -Werror -g -std=c++14
+CC=g++
+CCFLAGS=-Wall -Werror -g
 LIBS=-lsqlite3
 
 .PHONY:
@@ -11,11 +11,11 @@ clean:
 
 .PHONY:
 format:
-	clang-format -style=Google -i *.h *.cc
+	clang-format -style=Google -i *.h *.c
 
 demo: demo.o main.o
-	$(CXX) $(CXXFLAGS) -o demo $^ $(LIBS)
+	$(CXX) $(CCFLAGS) -o demo $^ $(LIBS)
 
-.cc.o:
-	$(CXX) $(CXXFLAGS) -c $<
+.c.o:
+	$(CC) $(CXXFLAGS) -c $<
 

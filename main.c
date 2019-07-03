@@ -1,13 +1,14 @@
 #include <errno.h>
 #include <sqlite3.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "demo.h"
 
 const char* TEST_DB_PATH = "db/test.db";
 
 int main(int argc, char* argv[]) {
-  sqlite3* db = nullptr;
+  sqlite3* db = NULL;
   int status = 0;
 
   // Open a DB instance.
@@ -25,8 +26,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Try a select.
-  char* msg = nullptr;
-  status = sqlite3_exec(db, "SELECT * FROM demo", nullptr, nullptr, &msg);
+  char* msg = NULL;
+  status = sqlite3_exec(db, "SELECT * FROM demo", NULL, NULL, &msg);
   if (status == SQLITE_OK) {
     fprintf(stderr, "OK\n");
   } else {

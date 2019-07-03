@@ -2,11 +2,11 @@
 #include <assert.h>
 #include <errno.h>
 #include <sqlite3.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <cstdio>
 
-#define TRACE_FUNCTION() \
-	fprintf(stderr, "TRACE: %s\n", __FUNCTION__)
+#define TRACE_FUNCTION() fprintf(stderr, "TRACE: %s\n", __FUNCTION__)
 
 const char *DEMO_TABLE_NAME = "demo";
 
@@ -15,12 +15,10 @@ const char *DEMO_TABLE_NAME = "demo";
 // The implementation of the virtual table informs the engine of
 // the schema by calling 'sqlite3_declare_vtab'. The name of the
 // table and any constraints are ignored.
-const char *DEMO_TABLE_SCHEMA = 
-  "CREATE TABLE xx( "
-	"  value INTEGER "
-	");";
-
-extern "C" {
+const char *DEMO_TABLE_SCHEMA =
+    "CREATE TABLE xx( "
+    "  value INTEGER "
+    ");";
 
 // The "xCreate" function is intentionally not implemented because
 // this demo implements an "eponymous virtual table", one that does
@@ -37,17 +35,15 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
                 sqlite3_vtab **ppVTab, char **pzErr) {
   TRACE_FUNCTION();
 
-	// Inform the SQLite engine of our virtual table's schema.
-	int status = sqlite3_declare_vtab(db, DEMO_TABLE_SCHEMA);
-	if (status != SQLITE_OK) {
-		return status;
-	}
+  // Inform the SQLite engine of our virtual table's schema.
+  int status = sqlite3_declare_vtab(db, DEMO_TABLE_SCHEMA);
+  if (status != SQLITE_OK) {
+    return status;
+  }
 
   // Allocate a copy of our custom table structure.
   // See demo.h for details.
-//DemoTable *table = new DemoTable();
-  DemoTable *table = reinterpret_cast<DemoTable*>(
-			sqlite3_malloc64(sizeof(DemoTable)));
+  DemoTable *table = (DemoTable *)(sqlite3_malloc64(sizeof(DemoTable)));
   if (!table) {
     // In the unlikely event that we couldn't allocate memory for the
     // structure, return the following error:
@@ -62,7 +58,7 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
   // Since there aren't any at this time, this is left as a TODO item.
 
   // Cast the table structure to the "base" type and return it to the engine.
-  *ppVTab = reinterpret_cast<sqlite3_vtab *>(table);
+  *ppVTab = (sqlite3_vtab *)table;
 
   return SQLITE_OK;
 }
@@ -76,10 +72,9 @@ int DemoBestIndex(sqlite3_vtab *pVTab, sqlite3_index_info *) {
 int DemoDisconnect(sqlite3_vtab *pVTab) {
   TRACE_FUNCTION();
 
-	// Just delete the table structure.
-  DemoTable *table = reinterpret_cast<DemoTable *>(pVTab);
-  //delete table;
-	sqlite3_free(table);
+  // Just free the table structure.
+  DemoTable *table = (DemoTable *)pVTab;
+  sqlite3_free(table);
 
   return SQLITE_OK;
 }
@@ -209,9 +204,6 @@ int DemoShadowName(const char *) {
   return SQLITE_ERROR;
 }
 
-}  // extern "C"
-
-
 // Register the demo table.
 int RegisterDemo(sqlite3 *db) {
   sqlite3_module module;
@@ -240,17 +232,17 @@ int RegisterDemo(sqlite3 *db) {
   module.xRowid = DemoRowid;
 
   // We don't support writing at this time in our demo.
-  module.xUpdate = nullptr;        // DemoUpdate;
-  module.xBegin = nullptr;         // DemoBegin;
-  module.xSync = nullptr;          // DemoSync;
-  module.xCommit = nullptr;        // DemoCommit;
-  module.xRollback = nullptr;      // DemoRollback;
-  module.xFindFunction = nullptr;  // DemoFindFunction;
-  module.xRename = nullptr;        // DemoRename;
-  module.xSavepoint = nullptr;     // DemoSavepoint;
-  module.xRelease = nullptr;       // DemoRelease;
-  module.xRollbackTo = nullptr;    // DemoRollbackTo;
-  module.xShadowName = nullptr;    // DemoShadowName;
+  module.xUpdate = NULL;        // DemoUpdate;
+  module.xBegin = NULL;         // DemoBegin;
+  module.xSync = NULL;          // DemoSync;
+  module.xCommit = NULL;        // DemoCommit;
+  module.xRollback = NULL;      // DemoRollback;
+  module.xFindFunction = NULL;  // DemoFindFunction;
+  module.xRename = NULL;        // DemoRename;
+  module.xSavepoint = NULL;     // DemoSavepoint;
+  module.xRelease = NULL;       // DemoRelease;
+  module.xRollbackTo = NULL;    // DemoRollbackTo;
+  module.xShadowName = NULL;    // DemoShadowName;
 
   return sqlite3_create_module(db, DEMO_TABLE_NAME, &module, 0);
 }
