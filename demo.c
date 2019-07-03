@@ -50,8 +50,6 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
     return SQLITE_NOMEM;
   }
 
-  printf("table: %p\n", table);
-
   // Clear out all the members of the structure.
   memset(table, 0, sizeof(DemoTable));
 

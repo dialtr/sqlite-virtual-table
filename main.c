@@ -30,26 +30,23 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-	/*
-  // Try a select.
-  char* msg = NULL;
-  status = sqlite3_exec(db, "SELECT * FROM demo;", callback, NULL, &msg);
-  //status = sqlite3_exec(db, "CREATE VIRTUAL TABLE demotab using demo;",
-  //                      callback, NULL, &msg);
-  if (status == SQLITE_OK) {
-    fprintf(stderr, "OK\n");
-  } else {
-    fprintf(stderr, "error %d returned from sqlite3_exec(): %s\n", status,
-            msg ? msg : "(no message)");
-  }
-	*/
+	// Prepare a statement to select against our virtual table.
 	sqlite3_stmt* stmt = NULL;
 	status = sqlite3_prepare_v2(db, "SELECT value FROM demo;", -1, &stmt, NULL);
 	if (status != SQLITE_OK) {
 		fprintf(stderr, "error %d returned from sqlite3_prepare_v2(): %s\n",
 				status, sqlite3_errmsg(db));
-	} else {
-		fprintf(stderr, "OK\n");
+		sqlite3_close(db);
+		return 1;
+	}
+
+	// Release the statement.
+	status = sqlite3_finalize(stmt);
+	if (status != SQLITE_OK) {
+		fprintf(stderr, "error %d returned from sqlite3_finalize(): %s\n",
+				status, sqlite3_errmsg(db));
+		sqlite3_close(db);
+		return 1;
 	}
 
   // Close the db instance.
