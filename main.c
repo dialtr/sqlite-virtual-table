@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 
 	// Prepare a statement to select against our virtual table.
 	sqlite3_stmt* stmt = NULL;
-	status = sqlite3_prepare_v2(db, "SELECT value FROM demo;", -1, &stmt, NULL);
+	status = sqlite3_prepare_v2(db, "SELECT value FROM demo ORDER BY value DESC;", -1, &stmt, NULL);
 	if (status != SQLITE_OK) {
 		fprintf(stderr, "error %d returned from sqlite3_prepare_v2(): %s\n",
 				status, sqlite3_errmsg(db));
@@ -40,6 +40,10 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	// Print rows
+	while ((status = sqlite3_step(stmt)) == SQLITE_ROW) {
+		printf("row: value = %d\n", sqlite3_column_int(stmt, 0));
+	}
 
 
 	// Release the statement.
