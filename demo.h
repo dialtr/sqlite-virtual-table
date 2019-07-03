@@ -5,12 +5,12 @@
 
 int RegisterDemo(sqlite3 *db);
 
-struct DemoTable {
+typedef struct DemoTable {
   sqlite3_vtab base;
-};
+} DemoTable;
 
-struct DemoCursor {
+typedef struct DemoCursor {
   sqlite3_vtab_cursor base;
-};
+} DemoCursor;
 
 #endif  // DEMO_H_

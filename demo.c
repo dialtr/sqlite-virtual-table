@@ -63,7 +63,7 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
   return SQLITE_OK;
 }
 
-int DemoBestIndex(sqlite3_vtab *pVTab, sqlite3_index_info *) {
+int DemoBestIndex(sqlite3_vtab *pVTab, sqlite3_index_info *info) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
@@ -91,38 +91,38 @@ int DemoOpen(sqlite3_vtab *pVTab, sqlite3_vtab_cursor **ppCursor) {
   return SQLITE_ERROR;
 }
 
-int DemoClose(sqlite3_vtab_cursor *) {
+int DemoClose(sqlite3_vtab_cursor *cursor) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
 }
 
-int DemoFilter(sqlite3_vtab_cursor *, int idxNum, const char *idxStr, int argc,
+int DemoFilter(sqlite3_vtab_cursor *cursor, int idxNum, const char *idxStr, int argc,
                sqlite3_value **argv) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
 }
 
-int DemoNext(sqlite3_vtab_cursor *) {
+int DemoNext(sqlite3_vtab_cursor *cursor) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
 }
 
-int DemoEof(sqlite3_vtab_cursor *) {
+int DemoEof(sqlite3_vtab_cursor *cursor) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
 }
 
-int DemoColumn(sqlite3_vtab_cursor *, sqlite3_context *, int) {
+int DemoColumn(sqlite3_vtab_cursor *cursor, sqlite3_context *ctx, int n) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
 }
 
-int DemoRowid(sqlite3_vtab_cursor *, sqlite_int64 *pRowid) {
+int DemoRowid(sqlite3_vtab_cursor *cursor, sqlite_int64 *pRowid) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
@@ -132,7 +132,7 @@ int DemoRowid(sqlite3_vtab_cursor *, sqlite_int64 *pRowid) {
 // The following functions are intentionally not implemented for the demo.
 //
 
-int DemoUpdate(sqlite3_vtab *, int, sqlite3_value **, sqlite_int64 *) {
+int DemoUpdate(sqlite3_vtab *table, int n, sqlite3_value ** val, sqlite_int64 *rowid) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
   return SQLITE_ERROR;
@@ -163,7 +163,7 @@ int DemoRollback(sqlite3_vtab *pVTab) {
 }
 
 int DemoFindFunction(sqlite3_vtab *pVtab, int nArg, const char *zName,
-                     void (**pxFunc)(sqlite3_context *, int, sqlite3_value **),
+                     void (**pxFunc)(sqlite3_context *, int n, sqlite3_value ** val),
                      void **ppArg) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
@@ -178,19 +178,19 @@ int DemoRename(sqlite3_vtab *pVtab, const char *zNew) {
 
 // The methods above are in version 1 of the sqlite_module object. Those
 // below are for version 2 and greater.
-int DemoSavepoint(sqlite3_vtab *pVTab, int) {
+int DemoSavepoint(sqlite3_vtab *pVTab, int n) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
   return SQLITE_ERROR;
 }
 
-int DemoRelease(sqlite3_vtab *pVTab, int) {
+int DemoRelease(sqlite3_vtab *pVTab, int n) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
   return SQLITE_ERROR;
 }
 
-int DemoRollbackTo(sqlite3_vtab *pVTab, int) {
+int DemoRollbackTo(sqlite3_vtab *pVTab, int n) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
   return SQLITE_ERROR;
@@ -198,7 +198,7 @@ int DemoRollbackTo(sqlite3_vtab *pVTab, int) {
 
 // The methods above are in versions 1 and 2 of the sqlite_module object.
 // Those below are for version 3 and greater. */
-int DemoShadowName(const char *) {
+int DemoShadowName(const char *name) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
   return SQLITE_ERROR;

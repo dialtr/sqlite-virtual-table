@@ -1,5 +1,5 @@
-CC=g++
-CCFLAGS=-Wall -Werror -g
+CC=gcc
+CCFLAGS=-Wall -g
 LIBS=-lsqlite3
 
 .PHONY:
