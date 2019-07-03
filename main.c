@@ -5,7 +5,7 @@
 #include <string.h>
 #include "demo.h"
 
-const char* TEST_DB_PATH = "db/test.db";
+const char* TEST_DB_PATH = ":memory:";
 
 int callback(void* v, int n, char** arg1, char** args2) {
   printf("got here\n");
@@ -39,6 +39,8 @@ int main(int argc, char* argv[]) {
 		sqlite3_close(db);
 		return 1;
 	}
+
+
 
 	// Release the statement.
 	status = sqlite3_finalize(stmt);
