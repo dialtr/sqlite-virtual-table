@@ -1,6 +1,6 @@
 CC=gcc
 CCFLAGS=-Wall -g
-LIBS=-lsqlite3
+LIBS=-ldl -pthread
 
 .PHONY:
 all: demo
@@ -13,7 +13,7 @@ clean:
 format:
 	clang-format -style=Google -i *.h *.c
 
-demo: demo.o main.o
+demo: demo.o main.o sqlite3.c
 	$(CC) $(CCFLAGS) -o demo $^ $(LIBS)
 
 .c.o:

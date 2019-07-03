@@ -8,7 +8,7 @@
 
 #define TRACE_FUNCTION() fprintf(stderr, "TRACE: %s\n", __FUNCTION__)
 
-const char *DEMO_TABLE_NAME = "demo";
+const char *DEMO_MODULE_NAME = "demo";
 
 // The schema for our demo table. For the demo, the table schema
 // consists of a single column named 'value', which is an integer.
@@ -49,6 +49,8 @@ int DemoConnect(sqlite3 *db, void *pAux, int argc, const char *const *argv,
     // structure, return the following error:
     return SQLITE_NOMEM;
   }
+
+  printf("table: %p\n", table);
 
   // Clear out all the members of the structure.
   memset(table, 0, sizeof(DemoTable));
@@ -97,8 +99,8 @@ int DemoClose(sqlite3_vtab_cursor *cursor) {
   return SQLITE_ERROR;
 }
 
-int DemoFilter(sqlite3_vtab_cursor *cursor, int idxNum, const char *idxStr, int argc,
-               sqlite3_value **argv) {
+int DemoFilter(sqlite3_vtab_cursor *cursor, int idxNum, const char *idxStr,
+               int argc, sqlite3_value **argv) {
   TRACE_FUNCTION();
   // TODO(tdial): Implement
   return SQLITE_ERROR;
@@ -132,7 +134,8 @@ int DemoRowid(sqlite3_vtab_cursor *cursor, sqlite_int64 *pRowid) {
 // The following functions are intentionally not implemented for the demo.
 //
 
-int DemoUpdate(sqlite3_vtab *table, int n, sqlite3_value ** val, sqlite_int64 *rowid) {
+int DemoUpdate(sqlite3_vtab *table, int n, sqlite3_value **val,
+               sqlite_int64 *rowid) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
   return SQLITE_ERROR;
@@ -163,7 +166,8 @@ int DemoRollback(sqlite3_vtab *pVTab) {
 }
 
 int DemoFindFunction(sqlite3_vtab *pVtab, int nArg, const char *zName,
-                     void (**pxFunc)(sqlite3_context *, int n, sqlite3_value ** val),
+                     void (**pxFunc)(sqlite3_context *, int n,
+                                     sqlite3_value **val),
                      void **ppArg) {
   TRACE_FUNCTION();
   // Intentionally not implemented.
@@ -204,8 +208,42 @@ int DemoShadowName(const char *name) {
   return SQLITE_ERROR;
 }
 
+int RegisterDemo(sqlite3 *db) {
+  TRACE_FUNCTION();
+  static sqlite3_module module = {
+      0,               // iVersion
+      DemoConnect,     // xCreate
+      DemoConnect,     // xConnect
+      DemoBestIndex,   // xBestIndex
+      DemoDisconnect,  // xDisconnect
+      DemoDisconnect,  // xDestroy
+      DemoOpen,        // xOpen
+      DemoClose,       // xClose
+      DemoFilter,      // xFilter
+      DemoNext,        // xNext
+      DemoEof,         // xEof
+      DemoColumn,      // xColumn
+      DemoRowid,       // xRowid
+      0,               // xUpdate
+      0,               // xBegin
+      0,               // xSync
+      0,               // xCommit
+      0,               // xRollback
+      0,               // xFindMethod
+      0,               // xRename
+      0,               // xSavepoint
+      0,               // xRelease
+      0,               // xRollbackTo
+      0,               // xShadowName
+  };
+  return sqlite3_create_module(db, DEMO_MODULE_NAME, &module, 0);
+}
+
+/*
 // Register the demo table.
 int RegisterDemo(sqlite3 *db) {
+  TRACE_FUNCTION();
+
   sqlite3_module module;
   memset(&module, 0, sizeof(module));
 
@@ -244,5 +282,6 @@ int RegisterDemo(sqlite3 *db) {
   module.xRollbackTo = NULL;    // DemoRollbackTo;
   module.xShadowName = NULL;    // DemoShadowName;
 
-  return sqlite3_create_module(db, DEMO_TABLE_NAME, &module, 0);
+  return sqlite3_create_module(db, DEMO_MODULE_NAME, &module, 0);
 }
+*/

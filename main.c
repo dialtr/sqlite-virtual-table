@@ -7,6 +7,11 @@
 
 const char* TEST_DB_PATH = "db/test.db";
 
+int callback(void* v, int n, char** arg1, char** args2) {
+  printf("got here\n");
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
   sqlite3* db = NULL;
   int status = 0;
@@ -27,11 +32,14 @@ int main(int argc, char* argv[]) {
 
   // Try a select.
   char* msg = NULL;
-  status = sqlite3_exec(db, "SELECT * FROM demo", NULL, NULL, &msg);
+  // status = sqlite3_exec(db, "SELECT * FROM demo;", callback, NULL, &msg);
+  //status = sqlite3_exec(db, "CREATE VIRTUAL TABLE demotab using demo;",
+  //                      callback, NULL, &msg);
   if (status == SQLITE_OK) {
     fprintf(stderr, "OK\n");
   } else {
-    fprintf(stderr, "error %d returned from sqlite3_exec()\n", status);
+    fprintf(stderr, "error %d returned from sqlite3_exec(): %s\n", status,
+            msg ? msg : "(no message)");
   }
 
   // Close the db instance.
