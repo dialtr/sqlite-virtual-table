@@ -11,8 +11,8 @@ typedef struct DemoTable {
 
 typedef struct DemoCursor {
   sqlite3_vtab_cursor base;
-	int n;
-	int eof;
+  int n;
+  int eof;
 } DemoCursor;
 
 #endif  // DEMO_H_

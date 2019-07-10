@@ -89,23 +89,23 @@ int DemoDestroy(sqlite3_vtab *pVTab) {
 
 int DemoOpen(sqlite3_vtab *pVTab, sqlite3_vtab_cursor **ppCursor) {
   TRACE_FUNCTION();
-	DemoCursor* cursor = (DemoCursor*)sqlite3_malloc64(sizeof(DemoCursor));
-	if (!cursor) {
-		return SQLITE_NOMEM;
-	}
+  DemoCursor *cursor = (DemoCursor *)sqlite3_malloc64(sizeof(DemoCursor));
+  if (!cursor) {
+    return SQLITE_NOMEM;
+  }
 
-	memset(cursor, 0, sizeof(DemoCursor));
-	cursor->base.pVtab = pVTab;
-	cursor->n = 0;
-	*ppCursor = (sqlite3_vtab_cursor*)cursor;
+  memset(cursor, 0, sizeof(DemoCursor));
+  cursor->base.pVtab = pVTab;
+  cursor->n = 0;
+  *ppCursor = (sqlite3_vtab_cursor *)cursor;
 
   return SQLITE_OK;
 }
 
 int DemoClose(sqlite3_vtab_cursor *pCursor) {
   TRACE_FUNCTION();
-	DemoCursor* cursor = (DemoCursor*)pCursor;
-	sqlite3_free(cursor);
+  DemoCursor *cursor = (DemoCursor *)pCursor;
+  sqlite3_free(cursor);
   return SQLITE_OK;
 }
 
@@ -118,35 +118,35 @@ int DemoFilter(sqlite3_vtab_cursor *cursor, int idxNum, const char *idxStr,
 
 int DemoNext(sqlite3_vtab_cursor *pCursor) {
   TRACE_FUNCTION();
-	DemoCursor* cursor = (DemoCursor*)pCursor;
-	++cursor->n;
+  DemoCursor *cursor = (DemoCursor *)pCursor;
+  ++cursor->n;
   return SQLITE_OK;
 }
 
 int DemoEof(sqlite3_vtab_cursor *pCursor) {
   TRACE_FUNCTION();
-  DemoCursor* cursor = (DemoCursor*)pCursor;
+  DemoCursor *cursor = (DemoCursor *)pCursor;
   return (cursor->n >= 10);
 }
 
 int DemoColumn(sqlite3_vtab_cursor *pCursor, sqlite3_context *ctx, int i) {
   TRACE_FUNCTION();
-	DemoCursor* cursor = (DemoCursor*)pCursor;
-	// TODO(tdial): This implementation just returns an integer that's
-	// stashed in the cursor. A real implementation would check the column
-	// number specified 'i' and return a value that was appropriate for the
-	// schema.
-	sqlite3_result_int(ctx, cursor->n);
+  DemoCursor *cursor = (DemoCursor *)pCursor;
+  // TODO(tdial): This implementation just returns an integer that's
+  // stashed in the cursor. A real implementation would check the column
+  // number specified 'i' and return a value that was appropriate for the
+  // schema.
+  sqlite3_result_int(ctx, cursor->n);
   return SQLITE_OK;
 }
 
 int DemoRowid(sqlite3_vtab_cursor *pCursor, sqlite_int64 *pRowid) {
   TRACE_FUNCTION();
-	DemoCursor* cursor = (DemoCursor*)pCursor;
-	// TODO(tdial): A real implementation might return a unique rowid
-	// (a 64 bit integer.) Here, we just return the value of the integer
-	// column.
-	*pRowid = cursor->n;  
+  DemoCursor *cursor = (DemoCursor *)pCursor;
+  // TODO(tdial): A real implementation might return a unique rowid
+  // (a 64 bit integer.) Here, we just return the value of the integer
+  // column.
+  *pRowid = cursor->n;
   return SQLITE_OK;
 }
 
